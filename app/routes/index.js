@@ -145,7 +145,7 @@ router.put('/book', (req, res) => {
     conn.query(sql, [name, author, book_id] , (err, result) => {
       if (err) throw err;
 
-      let message = [];
+      let message = "";
       if (result.changedRows === 0) {
         // ถ้า changedRows มีค่าเท่ากับ 0 แสดงว่าไม่มีการเปลี่ยนแปลงข้อมูลเดิม
         message = "Book not found or data are same";
@@ -165,6 +165,42 @@ router.put('/book', (req, res) => {
 
 
 
+
+/* GET Delete book by ID */
+router.delete('/book', (req, res) => {
+  let book_id = req.body.id;
+
+  if (!book_id) {
+
+    return res.status(400).send({
+      error: true,
+      message: "please provide book ID"
+    });
+
+  } else {
+
+    let sql ="DELETE from books WHERE id=?";
+
+    conn.query(sql, [book_id], (err, result, fields) => {
+      if (err) throw err;
+
+      message = "";
+      if (result.affectedRows === 0) {
+        // ถ้า affectedRows เท่ากับ 0 แสดงว่า หาหนังสือไม่เจอ
+        message = "Book not found";
+      } else {
+        message = "Book successfully deleted";
+      }
+
+      return res.send({
+        error: false,
+        data: result,
+        message: message
+      })
+    })
+  }
+
+})
 
 
 
