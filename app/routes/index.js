@@ -50,7 +50,7 @@ router.get('/books', (req, res) => {
 
 
 /* POST Add a new book */
-router.post('/addbook', (req, res) => {
+router.post('/book', (req, res) => {
   let name = req.body.name;
   let author = req.body.author;
 
@@ -85,6 +85,7 @@ router.post('/addbook', (req, res) => {
 
 /* GET Retrieve book by ID */
 router.get('/book/:id', (req, res) => {
+
   let book_id = req.params.id;
 
   //validation
@@ -115,9 +116,65 @@ router.get('/book/:id', (req, res) => {
         message: message
       })
     })
-    
+
   }
 })
+
+
+
+
+/* POST Update book by ID */
+router.put('/book', (req, res) => {
+
+  let book_id = req.body.id;
+  let name = req.body.name;
+  let author = req.body.author;
+
+  //validation
+  if (!book_id || !name || !author) {
+
+    return res.status(400).send({
+      error: true,
+      message: "Please provide book_id , name and author"
+    })
+
+  } else {
+
+    let sql = "UPDATE books SET name=? , author=? WHERE id=?";
+
+    conn.query(sql, [name, author, book_id] , (err, result) => {
+      if (err) throw err;
+
+      let message = [];
+      if (result.changedRows === 0) {
+        // ถ้า changedRows มีค่าเท่ากับ 0 แสดงว่าไม่มีการเปลี่ยนแปลงข้อมูลเดิม
+        message = "Book not found or data are same";
+      } else {
+        message = "Book Successfully updated";
+      }
+
+      return res.send({
+        error: false,
+        data: result,
+        message: message
+      })
+    })
+
+  }
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
