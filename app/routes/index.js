@@ -83,6 +83,43 @@ router.post('/addbook', (req, res) => {
 
 
 
+/* GET Retrieve book by ID */
+router.get('/book/:id', (req, res) => {
+  let book_id = req.params.id;
+
+  //validation
+  if (!book_id) {
+
+    return res.status(400).send({
+      error: true,
+      message: "Please provide book ID",
+    })
+
+  } else {
+
+    let sql = "SELECT * FROM books WHERE id=?";
+
+    conn.query(sql, [book_id], (err, result) => {
+      if (err) throw err;
+
+      let message = "";
+      if ( result === undefined || result.length == 0) {
+        message = "Book not found";
+      } else {
+        message = "Successfully retrieved book data"
+      }
+
+      return res.send({
+        error: false,
+        data: result[0],
+        message: message
+      })
+    })
+    
+  }
+})
+
+
 
 
 module.exports = router;
